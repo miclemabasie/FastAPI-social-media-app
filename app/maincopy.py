@@ -3,15 +3,14 @@ from fastapi.params import Body
 from pydantic import BaseModel
 from typing import Optional
 import psycopg2
-from psycopg2.extras import RealDictCursor
 import time
 
 app = FastAPI()
 
 while True:
     try:
-        conn = psycopg2.connect(host="localhost", database="fastapi", user="miclem", password="1234", cursor_factory=RealDictCursor)
-        cursor = conn.cursor()
+        conn = psycopg2.connect(host="localhost", database="fastapi", user="miclem", password="1234")
+        cur = conn.cursor()
         print("DATABASE CONNECTION WAS SUCCESSFUL")
         break
     except psycopg2.Error as e:
@@ -68,10 +67,7 @@ def index():
 
 @app.get("/posts", status_code=status.HTTP_200_OK)
 def get_posts():
-    sql_statemtent = """SELECT * FROM posts;"""
-    cursor.execute(sql_statemtent)
-    posts = cursor.fetchall()
-    return {"posts": posts}
+    return {"posts": my_posts}
 
 @app.get("/posts/{id}", status_code=status.HTTP_200_OK)
 def get_post_detail(id: int):
@@ -84,14 +80,11 @@ def get_post_detail(id: int):
 
 @app.post("/posts")
 def create_post(post: Post):
-    # prepare the statement
-   
-    sql_statemtent = """INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """
-    insert_params = (post.title, post.content, post.published)
-    cursor.execute(sql_statemtent, insert_params)
-    post = cursor.fetchone()
-    conn.commit()
-    return {"post": post}
+    post_dict = post.model_dump()
+    post_dict["id"] = calculate_post_id()
+    # append post to the list of posts
+    my_posts.append(post_dict)
+    return {"post": post_dict}
 
 
 @app.put("/posts/{id}")
