@@ -27,6 +27,7 @@ class Post(BaseModel):
     content: str
     published: bool = True
     rating: Optional[int] = None
+    created_at: str
 
 my_posts = [
     {
@@ -75,10 +76,12 @@ def get_posts():
 
 @app.get("/posts/{id}", status_code=status.HTTP_200_OK)
 def get_post_detail(id: int):
-    index = find_post_index(id)
-    if index is None:
+    sql_statement = """SELECT * FROM posts WHERE id = (%s)"""
+    sql_params = (id,)
+    cursor.execute(sql_statement, sql_params)
+    post = cursor.fetchone()
+    if post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post with given id not found")
-    post = my_posts[index]
     return {"data": post}
 
 
@@ -96,26 +99,26 @@ def create_post(post: Post):
 
 @app.put("/posts/{id}")
 def update_post(id: int, post: Post):
-    # get the index of a post
-    index = find_post_index(id)
-    if index is None:
+    sql_statement = """UPDATE posts SET title = %s, content = %s, published = %s, created_at = %s WHERE id = %s RETURNING *;"""
+    sql_params = (post.title, post.content, post.published, post.created_at, id)
+    cursor.execute(sql_statement, sql_params)
+    post = cursor.fetchone()
+    if post is None:
         # update the post
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="post with given id not found")
-
-    new_post = post.model_dump()
-    new_post["id"] = id
-    my_posts[index] = new_post
-    return {"data": my_posts[index]}
+    conn.commit()
+    return {"data": post}
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int):
-    # get index of post in the lstTrigo
-    index = find_post_index(id)
-    if index is None:
+    sql_statement = """DELETE FROM posts WHERE id = %s RETURNING *;"""
+    sql_params = (id,)
+    cursor.execute(sql_statement, sql_params)
+    post = cursor.fetchone()
+    print(post)
+    if post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post with id not found")
-    # remove post from the list
-    print("This is the index", index)
-    my_posts.pop(index)
+    conn.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
     
     
