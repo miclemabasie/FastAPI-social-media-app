@@ -1,10 +1,18 @@
-from fastapi import FastAPI, status, HTTPException, Response
+from fastapi import FastAPI, status, HTTPException, Response, Depends
 from fastapi.params import Body
 from pydantic import BaseModel
 from typing import Optional
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
+# Databases
+from . import models
+from .database import engine, get_db
+from sqlalchemy.orm import Session
+
+models.Base.metadata.create_all(bind=engine)
+
+
 
 app = FastAPI()
 
@@ -18,8 +26,6 @@ while True:
         print("Could not establish a connection to the database")
         print(e)
         time.sleep(3)
-
-
 
 
 class Post(BaseModel):
@@ -90,7 +96,9 @@ def delete_post(id: int):
     conn.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
     
-    
+@app.get("/sqlalchemy")
+def test_posts(db: Session = Depends(get_db)):
+    return {"status": "success"}
 
 if __name__ == "__main__":
     import uvicorn
