@@ -29,37 +29,6 @@ class Post(BaseModel):
     rating: Optional[int] = None
     created_at: str
 
-my_posts = [
-    {
-        "id": 1,
-        "title": "Introduction to python",
-        "content": "This is the best introductory article to learning python"
-    },
-
-    {
-        "id": 2,
-        "title": "Introduction to Java",
-        "content": "This is the best introductory article to learning Java"
-    },
-    {
-        "id": 3,
-        "title": "Introduction to C++",
-        "content": "This is the best introductory article to learning C++"
-    }
-]
-
-def find_post_index(id):
-    """Returns the index of post based on it's ID"""
-    for index, post in enumerate(my_posts):
-        if post["id"] == id:
-            return index
-    return None
-
-def calculate_post_id():
-    """Calculate the id of a newly created post"""
-    post_len = len(my_posts)
-    return post_len + 1
-
 
 @app.get("/check", status_code=status.HTTP_200_OK)
 def index():
