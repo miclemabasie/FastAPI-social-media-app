@@ -32,9 +32,6 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool = True
-    rating: Optional[int] = None
-    created_at: str
-
 
 @app.get("/check", status_code=status.HTTP_200_OK)
 def index():
@@ -43,64 +40,54 @@ def index():
 
 
 @app.get("/posts", status_code=status.HTTP_200_OK)
-def get_posts():
-    sql_statemtent = """SELECT * FROM posts;"""
-    cursor.execute(sql_statemtent)
-    posts = cursor.fetchall()
+def get_posts(db: Session = Depends(get_db)):
+    query = db.query(models.Post) # creates the SQL query for getting all the posts from the database
+    posts = query.all()
     return {"posts": posts}
 
 @app.get("/posts/{id}", status_code=status.HTTP_200_OK)
-def get_post_detail(id: int):
-    sql_statement = """SELECT * FROM posts WHERE id = (%s)"""
-    sql_params = (id,)
-    cursor.execute(sql_statement, sql_params)
-    post = cursor.fetchone()
+def get_post_detail(id: int, db: Session = Depends(get_db)):
+    post = db.query(models.Post).filter(models.Post.id ==id).first() 
     if post is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post with given id not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post with id not found")
     return {"data": post}
 
 
 @app.post("/posts")
-def create_post(post: Post):
-    # prepare the statement
-   
-    sql_statemtent = """INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """
-    insert_params = (post.title, post.content, post.published)
-    cursor.execute(sql_statemtent, insert_params)
-    post = cursor.fetchone()
-    conn.commit()
-    return {"post": post}
+def create_post(post: Post, db: Session = Depends(get_db)):
+    # new_post = models.Post(title=post.title, content=post.content, published=post.published)    
+    # OR
+    new_post = models.Post(**post.model_dump())
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post) # return the new post that was just created
+    return {"post": new_post}
 
 
 @app.put("/posts/{id}")
-def update_post(id: int, post: Post):
-    sql_statement = """UPDATE posts SET title = %s, content = %s, published = %s, created_at = %s WHERE id = %s RETURNING *;"""
-    sql_params = (post.title, post.content, post.published, post.created_at, id)
-    cursor.execute(sql_statement, sql_params)
-    post = cursor.fetchone()
+def update_post(id: int, post: Post, db: Session = Depends(get_db)):
+    # Try to fetch the post with the given ID from the database
+    post_query = db.query(models.Post).filter(models.Post.id == id)
     if post is None:
-        # update the post
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="post with given id not found")
-    conn.commit()
-    return {"data": post}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post with given id not found")
+    post_query.update(post.model_dump(), synchronize_session=False)
+    db.commit()
+    post_obj = post_query.first()
+    return {"data": post_obj}
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int):
-    sql_statement = """DELETE FROM posts WHERE id = %s RETURNING *;"""
-    sql_params = (id,)
-    cursor.execute(sql_statement, sql_params)
-    post = cursor.fetchone()
-    print(post)
-    if post is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post with id not found")
-    conn.commit()
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+def delete_post(id: int, db: Session = Depends(get_db)):
+    post = db.query(models.Post).filter(models.Post.id == id)
+    if post.first() is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post with given id not found")
+    post.delete(synchronize_session=False)
+    db.commit()
     
-@app.get("/sqlalchemy")
-def test_posts(db: Session = Depends(get_db)):
-    return {"status": "success"}
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
 
 if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
