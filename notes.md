@@ -45,3 +45,6 @@ class Post(Base):
     content = Column(String, nullable=False)
     published = Column(Boolean, nullable=True, default=True)
 ```
+
+\*\* Note should be taken that to achieve Response formating with pydantics then we need to use python's return annotation types
+5:50

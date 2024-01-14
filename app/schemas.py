@@ -1,15 +1,22 @@
 from pydantic import BaseModel
+from datetime import datetime
+
 
 class PostBase(BaseModel):
-    id: int
     title: str
     content: str
     published: bool = True
-    created_at: str
-
 
 class PostCreate(PostBase):
     pass
+
+class PostUpdate(PostBase):
+    pass
+
+# Request
+class PostResponse(PostBase):
+    id: int
+    created_at: datetime
 
 
 class UserBase(BaseModel):
@@ -17,3 +24,4 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     pass
+

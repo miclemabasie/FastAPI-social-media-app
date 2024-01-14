@@ -9,6 +9,7 @@ import time
 from . import models
 from .database import engine, get_db
 from sqlalchemy.orm import Session
+from .schemas import PostCreate, PostUpdate, PostResponse
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -16,22 +17,6 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-while True:
-    try:
-        conn = psycopg2.connect(host="localhost", database="fastapi", user="miclem", password="1234", cursor_factory=RealDictCursor)
-        cursor = conn.cursor()
-        print("DATABASE CONNECTION WAS SUCCESSFUL")
-        break
-    except psycopg2.Error as e:
-        print("Could not establish a connection to the database")
-        print(e)
-        time.sleep(3)
-
-
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool = True
 
 @app.get("/check", status_code=status.HTTP_200_OK)
 def index():
@@ -40,32 +25,32 @@ def index():
 
 
 @app.get("/posts", status_code=status.HTTP_200_OK)
-def get_posts(db: Session = Depends(get_db)):
+def get_posts(db: Session = Depends(get_db)) -> list[PostResponse]:
     query = db.query(models.Post) # creates the SQL query for getting all the posts from the database
     posts = query.all()
-    return {"posts": posts}
+    return posts
 
 @app.get("/posts/{id}", status_code=status.HTTP_200_OK)
-def get_post_detail(id: int, db: Session = Depends(get_db)):
+def get_post_detail(id: int, db: Session = Depends(get_db)) -> PostResponse:
     post = db.query(models.Post).filter(models.Post.id ==id).first() 
     if post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post with id not found")
-    return {"data": post}
+    return post
 
 
 @app.post("/posts")
-def create_post(post: Post, db: Session = Depends(get_db)):
+def create_post(post: PostCreate, db: Session = Depends(get_db)) -> PostResponse:
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)    
     # OR
     new_post = models.Post(**post.model_dump())
     db.add(new_post)
     db.commit()
     db.refresh(new_post) # return the new post that was just created
-    return {"post": new_post}
+    return new_post
 
 
 @app.put("/posts/{id}")
-def update_post(id: int, post: Post, db: Session = Depends(get_db)):
+def update_post(id: int, post: PostCreate, db: Session = Depends(get_db)) -> PostResponse:
     # Try to fetch the post with the given ID from the database
     post_query = db.query(models.Post).filter(models.Post.id == id)
     if post is None:
@@ -73,7 +58,7 @@ def update_post(id: int, post: Post, db: Session = Depends(get_db)):
     post_query.update(post.model_dump(), synchronize_session=False)
     db.commit()
     post_obj = post_query.first()
-    return {"data": post_obj}
+    return post_obj
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db: Session = Depends(get_db)):
