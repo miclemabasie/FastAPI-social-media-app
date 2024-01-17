@@ -20,8 +20,15 @@ class PostResponse(PostBase):
 
 
 class UserBase(BaseModel):
-    pass
+    email: str
+    username: str
 
 class UserCreate(UserBase):
-    pass
+    password: str
+    password_repeat: str
+
+
+class UserResponse(UserBase):
+    id: int
+    created_at: str
 

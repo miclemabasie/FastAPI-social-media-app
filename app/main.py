@@ -9,7 +9,7 @@ import time
 from . import models
 from .database import engine, get_db
 from sqlalchemy.orm import Session
-from .schemas import PostCreate, PostUpdate, PostResponse
+from .schemas import PostCreate, PostUpdate, PostResponse, UserResponse, UserCreate
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -69,6 +69,35 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     db.commit()
     
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# users
+
+@app.get("/users")
+def get_users(db: Session = Depends(get_db)) -> list[UserResponse]:
+    users = db.query(models.User)
+    users = users.all()
+    return users
+
+
+
+@app.post("/users")
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    # new_user = models.User(**user.model_dump())
+    # extract the fields from the request body
+    email, username, password, password_re = user.model_dump().values()
+    # Check if password match
+    if password != password_re:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match")
+    print(email, username, password, password_re)
+    # db.add(new_user)
+    # db.commit()
+    # db.refresh(new_user)
+
+
+    return "new_user"
+    
+
 
 
 if __name__ == "__main__":
