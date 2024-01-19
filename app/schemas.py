@@ -30,5 +30,5 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     id: int
-    created_at: str
+    created_at: datetime
 

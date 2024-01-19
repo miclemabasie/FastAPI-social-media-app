@@ -10,6 +10,8 @@ from . import models
 from .database import engine, get_db
 from sqlalchemy.orm import Session
 from .schemas import PostCreate, PostUpdate, PostResponse, UserResponse, UserCreate
+from .validators import validate_user_email
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -82,20 +84,29 @@ def get_users(db: Session = Depends(get_db)) -> list[UserResponse]:
 
 
 @app.post("/users")
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    # new_user = models.User(**user.model_dump())
+def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse:
     # extract the fields from the request body
-    email, username, password, password_re = user.model_dump().values()
     # Check if password match
+    email, username, password, password_re = user.model_dump().values()
     if password != password_re:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match")
-    print(email, username, password, password_re)
-    # db.add(new_user)
-    # db.commit()
-    # db.refresh(new_user)
+    if not validate_user_email(email):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Email ID")
+
+    new_user = models.User(username=user.username, email=user.email, password=user.password)
+
+    # Check if user exist in the database
+    user_check = db.query(models.Post).filter(models.User.email == user.email).first()
+    if user_check is not None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User with Email ID already exists")
+    
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
 
 
-    return "new_user"
+
     
 
 
