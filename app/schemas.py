@@ -30,5 +30,11 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     id: int
+    username: str
+    email: str
     created_at: datetime
 
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str

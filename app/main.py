@@ -9,15 +9,23 @@ import time
 from . import models
 from .database import engine, get_db
 from sqlalchemy.orm import Session
-from .schemas import PostCreate, PostUpdate, PostResponse, UserResponse, UserCreate
+from .schemas import PostCreate, PostUpdate, PostResponse, UserResponse, UserCreate, Token
 from .validators import validate_user_email
+from passlib.context import CryptContext
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
+
+
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto')
 
 models.Base.metadata.create_all(bind=engine)
 
 
-
 app = FastAPI()
+
+
+
 
 
 @app.get("/check", status_code=status.HTTP_200_OK)
@@ -92,8 +100,8 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match")
     if not validate_user_email(email):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Email ID")
-
-    new_user = models.User(username=user.username, email=user.email, password=user.password)
+    hashed_password = pwd_context.hash(user.password)
+    new_user = models.User(username=user.username, email=user.email, password=hashed_password)
 
     # Check if user exist in the database
     user_check = db.query(models.Post).filter(models.User.email == user.email).first()
@@ -106,8 +114,6 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
     return new_user
 
 
-
-    
 
 
 
