@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.get("/", status_code=status.HTTP_200_OK)
 def get_posts(db: Session = Depends(get_db), user_id: int = Depends(get_current_user)) -> list[PostResponse]:
-    query = db.query(models.Post) # creates the SQL query for getting all the posts from the database
+    query = db.query(models.Post).filter(models.Post.owner_id == user_id.id) # creates the SQL query for getting all the posts from the database
     posts = query.all()
     return posts
 
