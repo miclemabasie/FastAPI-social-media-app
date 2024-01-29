@@ -13,9 +13,9 @@ router = APIRouter(
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
-def get_posts(db: Session = Depends(get_db), user_id: int = Depends(get_current_user)) -> list[PostResponse]:
+def get_posts(db: Session = Depends(get_db), user_id: int = Depends(get_current_user), limit: int = 100) -> list[PostResponse]:
     query = db.query(models.Post).filter(models.Post.owner_id == user_id.id) # creates the SQL query for getting all the posts from the database
-    posts = query.all()
+    posts = query.limit(limit)
     return posts
 
 @router.get("/{id}", status_code=status.HTTP_200_OK)
@@ -31,9 +31,8 @@ def get_post_detail(id: int, db: Session = Depends(get_db), user_id: int = Depen
 def create_post(post: PostCreate, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)) -> PostResponse:
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)    
     # OR
-    print(user_id)
-    print("This is the new post: ##########: ", user_id.id)
-    new_post = models.Post(**post.model_dump(), owner_id=user_id)
+   
+    new_post = models.Post(**post.model_dump(), owner_id=user_id.id)
     db.add(new_post)
     db.commit()
     db.refresh(new_post) # return the new post that was just created
