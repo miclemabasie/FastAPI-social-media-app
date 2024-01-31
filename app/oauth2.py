@@ -6,11 +6,18 @@ from fastapi import Depends, status, HTTPException
 
 from fastapi.security import OAuth2PasswordBearer
 
+from dotenv import load_dotenv
+import os
+
+# Load .env file
+load_dotenv()
+
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-SECRET_KEY = "9ab1197da051af6fb51923c545ff631357d08f15bca2366ed974d83881d7c41e"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITM")
+ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 
 def create_access_token(data: dict):
