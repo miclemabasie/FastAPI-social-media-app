@@ -1,0 +1,105 @@
+This is my error :
+
+SELECT posts.id AS posts_id, posts.title AS posts_title, posts.content AS posts_content, posts.published AS posts_published, posts.created_at AS posts_created_at, posts.owner_id AS posts_owner_id, count(votes.post_id) AS votes 
+FROM posts LEFT OUTER JOIN votes ON votes.post_id = posts.id GROUP BY posts.id
+INFO:     127.0.0.1:33324 - "GET /posts/?skip=5 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/uvicorn/protocols/http/h11_impl.py", line 408, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/applications.py", line 116, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/_exception_handler.py", line 55, in wrapped_app
+    raise exc
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/_exception_handler.py", line 44, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/routing.py", line 746, in __call__
+    await route.handle(scope, receive, send)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/routing.py", line 75, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/_exception_handler.py", line 55, in wrapped_app
+    raise exc
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/_exception_handler.py", line 44, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/starlette/routing.py", line 70, in app
+    response = await func(request)
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/fastapi/routing.py", line 315, in app
+    content = await serialize_response(
+  File "/home/electron/Dev/python/FastAPI-social-media-app/env/lib/python3.10/site-packages/fastapi/routing.py", line 155, in serialize_response
+    raise ResponseValidationError(
+fastapi.exceptions.ResponseValidationError: 24 validation errors:
+  {'type': 'missing', 'loc': ('response', 0, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5e40>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 0, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5e40>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 1, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5e70>, 1), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 1, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5e70>, 1), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 2, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e60b0>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 2, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e60b0>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 3, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e7e20>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 3, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e7e20>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 4, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5de0>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 4, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5de0>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 5, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e7610>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 5, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e7610>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 6, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e75b0>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 6, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e75b0>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 7, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e6860>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 7, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e6860>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 8, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5ba0>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 8, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5ba0>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 9, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e6830>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 9, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e6830>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 10, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5d80>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 10, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5d80>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 11, 'title'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5cf0>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+  {'type': 'missing', 'loc': ('response', 11, 'content'), 'msg': 'Field required', 'input': (<app.models.Post object at 0x7fe7210e5cf0>, 0), 'url': 'https://errors.pydantic.dev/2.5/v/missing'}
+
+  The schema:
+
+
+class UserResponse(UserBase):
+    id: int
+    username: str
+    email: str
+    created_at: datetime
+
+# Request
+class PostResponse(PostBase):
+    id: int
+    created_at: datetime
+    owner_id: int
+    owner: UserResponse
+
+class PostResponseVote(PostBase):
+    Post: PostResponse
+    votes: int
+
+class Vote(BaseModel):
+    post_id: int
+    dir: conint(le=1)
+
+
+The route in flask api: 
+@router.get("/", status_code=status.HTTP_200_OK)
+def get_posts(db: Session = Depends(get_db), user_id: int = Depends(get_current_user), limit: int = 10, skip: int = 0, search: Optional[str] = "")-> list[PostResponseVote]:
+    query = db.query(models.Post).filter(models.Post.owner_id == user_id.id) # creates the SQL query for getting all the posts from the database
+    posts = query.filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
+
+    results = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
+        models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id)
+    
+    print(results)
+    results = results.all()
+
+    return results

@@ -4,7 +4,7 @@ from app.schemas import *
 from app import models
 from app.database import get_db
 from app.oauth2 import get_current_user
-
+from sqlalchemy import func
 router = APIRouter(
     prefix="/posts",
     tags = ["Posts"]
@@ -13,10 +13,17 @@ router = APIRouter(
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
-def get_posts(db: Session = Depends(get_db), user_id: int = Depends(get_current_user), limit: int = 10, skip: int = 0, search: Optional[str] = "") -> list[PostResponse]:
+def get_posts(db: Session = Depends(get_db), user_id: int = Depends(get_current_user), limit: int = 10, skip: int = 0, search: Optional[str] = "")-> list[PostResponseVote]:
     query = db.query(models.Post).filter(models.Post.owner_id == user_id.id) # creates the SQL query for getting all the posts from the database
     posts = query.filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
-    return posts
+
+    results = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
+        models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id)
+    
+    print(results)
+    results = results.all()
+
+    return results
 
 @router.get("/{id}", status_code=status.HTTP_200_OK)
 def get_post_detail(id: int, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)) -> PostResponse:
@@ -68,3 +75,32 @@ def delete_post(id: int, db: Session = Depends(get_db), user_id: int = Depends(g
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+
+
+
+# {
+# 		"title": "Mastering System Design",
+# 		"content": "This is the best intro course to learning DSA",
+# 		"published": True,
+# 		"id": 15,
+# 		"created_at": "2024-01-29T14:40:11.170473+01:00",
+# 		"owner_id": 12,
+# 		"owner": {
+# 			"email": "jane@mail.com",
+# 			"username": "abasie",
+# 			"id": 12,
+# 			"created_at": "2024-01-19T23:17:09.493666+01:00"
+# 		}
+# 	}
+
+# {
+# 		"Post": {
+# 			"id": 19,
+# 			"published": True,
+# 			"owner_id": 12,
+# 			"content": "This is the best intro course to learning DSA",
+# 			"title": "Mastering System Design",
+# 			"created_at": "2024-01-29T14:41:07.604781+01:00"
+# 		},
+# 		"votes": 0
+# 	}
