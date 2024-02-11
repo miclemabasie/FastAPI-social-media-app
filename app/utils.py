@@ -10,3 +10,8 @@ def hash(password: str):
 
 def verify_password_hash(raw_password, hashed_password):
     return pwd_context.verify(raw_password, hashed_password)
+
+
+def custom_password_hash(raw_password):
+
+    return pwd_context.hash(raw_password)

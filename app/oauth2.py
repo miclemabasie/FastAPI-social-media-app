@@ -16,7 +16,7 @@ load_dotenv()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
+ALGORITHM ="HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 def create_access_token(data: dict):
@@ -31,6 +31,7 @@ def create_access_token(data: dict):
 
 
 def verirfy_access_token(token: int, credentials_exception):
+    print("verifying password #########")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     

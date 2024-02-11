@@ -4,6 +4,7 @@ from app.schemas import *
 from app import models
 from app.database import get_db
 from app.validators import validate_user_email
+from app.utils import custom_password_hash
 
 router = APIRouter(
     prefix="/users",
@@ -27,7 +28,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match")
     if not validate_user_email(email):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Email ID")
-    hashed_password = hash(user.password)
+    hashed_password = custom_password_hash(user.password)
     new_user = models.User(username=user.username, email=user.email, password=hashed_password)
 
     # Check if user exist in the database
