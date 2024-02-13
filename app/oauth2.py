@@ -9,15 +9,14 @@ from fastapi.security import OAuth2PasswordBearer
 from dotenv import load_dotenv
 import os
 
-# Load .env file
-load_dotenv()
+
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = "9ab1197da051af6fb51923c545ff631357d08f15bca2366ed974d83881d7c41e"
 ALGORITHM ="HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 def create_access_token(data: dict):
     to_encode = data.copy()
