@@ -29,10 +29,12 @@ app.add_middleware(
 )
 
 
-
+@app.get("/")
+def index():
+    return {"message": "Hello world!"}
 
 @app.get("/check", status_code=status.HTTP_200_OK)
-def index():
+def check():
     """Checks the heath of the API, if ok, returns OK"""
     return {"message": "OK"}
 
