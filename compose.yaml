@@ -1,0 +1,41 @@
+version: '3'
+services:
+  api:
+    build: .
+    ports: 
+      - 9000:8000
+    environment:
+      - DATABASE_HOSTNAME=postgres-db
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=postgres
+      - ALGORITHM=${ALGORITHM}
+      - SECRET_KEY=${SECRET_KEY}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+    depends_on:
+      - postgres-db
+    networks:
+      - fastapi-network
+    #   context: .
+    #   dockerfile: ./Dockerfile
+    # command: uvicorn app.main:app --host 0.0.0.0
+    
+  postgres-db:
+    image: postgres:16.2-alpine
+    ports: 
+      - "5432:5432"
+
+    volumes:
+      - ./:/usr/src/app:ro
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - fastapi-network
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+
+volumes:
+  postgres_data:
+
+networks:
+  fastapi-network:
+    driver: bridge
