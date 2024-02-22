@@ -19,7 +19,7 @@ def get_users(db: Session = Depends(get_db)) -> list[UserResponse]:
 
 
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse:
     # extract the fields from the request body
     # Check if password match
@@ -40,7 +40,6 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse
     db.commit()
     db.refresh(new_user)
     return new_user
-
 
 @router.get("/{id}")
 def get_user(id: int, db: Session = Depends(get_db)) -> UserResponse:

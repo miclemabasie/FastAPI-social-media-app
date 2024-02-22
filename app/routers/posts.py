@@ -20,7 +20,6 @@ def get_posts(db: Session = Depends(get_db), user_id: int = Depends(get_current_
     results = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
         models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id)
     
-    print(results)
     results = results.all()
 
     return results
@@ -34,7 +33,7 @@ def get_post_detail(id: int, db: Session = Depends(get_db), user_id: int = Depen
     return post
 
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 def create_post(post: PostCreate, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)) -> PostResponse:
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)    
     # OR
@@ -46,7 +45,7 @@ def create_post(post: PostCreate, db: Session = Depends(get_db), user_id: int = 
     return new_post
 
 
-@router.put("/{id}")
+@router.put("/{id}", status_code=status.HTTP_200_OK)
 def update_post(id: int, post: PostCreate, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)) -> PostResponse:
     # Try to fetch the post with the given ID from the database
     post_query = db.query(models.Post).filter(models.Post.id == id)

@@ -25,8 +25,7 @@ class BankAccount():
         if amount <= self.blc:
             self.blc -= amount
         else:
-            print("Can't make a withdrawal, Not enought funds")
-            return -1
+            raise Exception("Not enought funds")
 
     def collect_interest(self):
         self.blc *= 1.1

@@ -21,10 +21,8 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session =
     if user is None:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
     # Check for password equlity
-    print("verifying the password now ##############")
     if not verify_password_hash(user_credentials.password, user.password):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
-    print("verifying the password after ##############")
     
     # Create a token
 

@@ -30,7 +30,6 @@ def create_access_token(data: dict):
 
 
 def verirfy_access_token(token: int, credentials_exception):
-    print("verifying password #########")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     

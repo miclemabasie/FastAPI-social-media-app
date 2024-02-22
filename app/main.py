@@ -31,7 +31,7 @@ app.add_middleware(
 
 @app.get("/")
 def index():
-    return {"message": "Hello world!"}
+    return {"message": "Hello World!"}
 
 @app.get("/check", status_code=status.HTTP_200_OK)
 def check():

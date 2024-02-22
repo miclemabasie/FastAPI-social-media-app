@@ -44,7 +44,6 @@ def test_bank_account_withdraw():
     bank_account = BankAccount(100)
     bank_account.withdraw(39)
     assert bank_account.blc == 61
-    assert bank_account.withdraw(100) == -1
 
 def test_bank_deposit_works():
     bank_account = BankAccount(10)
@@ -62,3 +61,24 @@ def test_bank_interest_collected():
     
 def test_bank_initial_balance_is_zero(zero_bank_account):
     assert zero_bank_account.blc == 0
+
+
+@pytest.mark.parametrize("deposite, withdraw, balance", [
+    (299, 99, 200),
+    (500, 400, 100),
+    (2000, 350, 1650),
+    (50, 40, 10),
+])
+def test_bank_transaction(zero_bank_account, deposite, withdraw, balance):
+    zero_bank_account.deposit(deposite)
+    zero_bank_account.withdraw(withdraw)
+    assert zero_bank_account.blc == balance
+
+# Test with exception
+@pytest.mark.parametrize("withdraw", [
+    (28)
+])
+def test_bank_insufficient_funds(zero_bank_account, withdraw):
+    with pytest.raises(Exception):
+        zero_bank_account.withdraw(withdraw)
+
