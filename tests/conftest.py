@@ -5,7 +5,7 @@ from app.oauth2 import create_access_token, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_
 from datetime import timedelta, datetime
 
 
-SQLALCHEMY_DATABASE_URL = "postgresql://miclem:1234@localhost/fastapi_test"
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:fBA*6EE6bBdAbDa*5B5AG*FA1ggc32c2@viaduct.proxy.rlwy.net:51086/railway"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL
 )
