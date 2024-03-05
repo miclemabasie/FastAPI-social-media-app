@@ -4,6 +4,19 @@ on: [push]
 
 jobs:
   build:
+    env:
+      DATABASE_HOSTNAME: localhost
+      DATABASE_PORT: 5432
+      DATABASE_NAME: fastapi
+      DATABASE_USER: miclem
+      DATABASE_PASSWORD: 1234
+
+      IS_ONLINE: 0
+
+      DB_URL: postgresql://postgres:fBA*6EE6bBdAbDa*5B5AG*FA1ggc32c2@viaduct.proxy.rlwy.net:51086/railway
+      ALGORITHM: HS256
+      SECRET_KEY: 9ab1197da051af6fb51923c545ff631357d08f15bca2366ed974d83881d7c41e
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
 
     runs-on: ubuntu-latest
     steps:
