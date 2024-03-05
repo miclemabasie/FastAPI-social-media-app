@@ -11,7 +11,7 @@ jobs:
       DATABASE_USER: miclem
       DATABASE_PASSWORD: 1234
 
-      IS_ONLINE: 0
+      IS_ONLINE: 1
 
       DB_URL: postgresql://postgres:fBA*6EE6bBdAbDa*5B5AG*FA1ggc32c2@viaduct.proxy.rlwy.net:51086/railway
       ALGORITHM: HS256
