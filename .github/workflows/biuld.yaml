@@ -1,0 +1,13 @@
+name: Test Code
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-lates
+    steps:
+      - name: pulling git repo
+        uses: actions/checkout@v2
+      - name: say hi to miclem
+        run: echo "Hello Miclem"
