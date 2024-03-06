@@ -73,5 +73,4 @@ jobs:
         with:
           context: .
           push: true
-          target: final
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi-socicalmedia-app:latest
