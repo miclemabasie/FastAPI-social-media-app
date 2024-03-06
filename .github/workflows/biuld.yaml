@@ -13,9 +13,9 @@ jobs:
       DATABASE_USER: ${{ secrets.DATABASE_USER }}
       DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
-      IS_ONLINE: 1
+      IS_ONLINE: 0
 
-      DB_URL: something new
+      DB_URL: ${{ secrets.DB_URL }}
       ALGORITHM: ${{ secrets.ALGORITHM }}
       SECRET_KEY: ${{ secrets.SERCRET_KEY }}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
